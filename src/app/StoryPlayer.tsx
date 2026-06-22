@@ -3,6 +3,7 @@ import { Player, type PlayerRef } from "@remotion/player";
 import { RecapComposition } from "../remotion/RecapComposition";
 import { SCENES, SCENE_STARTS, TOTAL_FRAMES, VIDEO } from "../remotion/config";
 import type { RecapData } from "../remotion/schema";
+import { buildSummaryImage } from "./summaryImage";
 
 type Props = { data: RecapData; onEdit: () => void };
 
@@ -72,35 +73,43 @@ export const StoryPlayer: React.FC<Props> = ({ data, onEdit }) => {
 
   const restart = useCallback(() => goToScene(0), [goToScene]);
 
-  // Share just the summary image — opens the phone's share sheet (WhatsApp, etc.).
+  // Open the share picker with text + link (+ summary image when supported).
+  // Works on static hosting (Netlify) — the image is generated in the browser.
   const shareSummary = useCallback(async () => {
     setBusy(true);
+    const url = window.location.href;
+    const title = "Recapul meu SOLO";
+    const text = `Anul meu ${data.year} cu SOLO. Vezi-ți recapul: ${url}`;
+    const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
     try {
-      const res = await fetch("/api/image", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) throw new Error(await res.text());
-      const blob = await res.blob();
-      const file = new File([blob], `recap-solo-${data.year}.png`, { type: "image/png" });
-      const text = `Anul meu ${data.year} cu SOLO 🚀`;
-      const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
-      if (nav.canShare && nav.canShare({ files: [file] })) {
-        // Native share sheet — user picks WhatsApp and the image is attached.
-        await nav.share({ files: [file], title: "Recapul meu SOLO", text });
-      } else {
-        // Desktop fallback: download the image + open WhatsApp with a message.
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = file.name;
-        a.click();
-        URL.revokeObjectURL(url);
-        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
+      // best-effort: build the summary image client-side
+      let file: File | undefined;
+      try {
+        const blob = await buildSummaryImage(data);
+        file = new File([blob], `recap-solo-${data.year}.png`, { type: "image/png" });
+      } catch {
+        /* image optional */
       }
-    } catch {
-      /* ignore — user can retry */
+
+      if (typeof nav.share === "function") {
+        if (file && nav.canShare && nav.canShare({ files: [file] })) {
+          await nav.share({ files: [file], text, title });
+        } else {
+          await nav.share({ text, title, url });
+        }
+        return;
+      }
+
+      // No Web Share (e.g. desktop Firefox): copy the link + open WhatsApp web with text.
+      try {
+        await navigator.clipboard?.writeText(text);
+      } catch {
+        /* ignore */
+      }
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
+    } catch (e) {
+      // user dismissed the share sheet → not an error
+      if ((e as Error)?.name === "AbortError") return;
     } finally {
       setBusy(false);
     }
@@ -182,6 +191,7 @@ export const StoryPlayer: React.FC<Props> = ({ data, onEdit }) => {
             onPointerDown={onPointerDown}
             onPointerUp={onPointerUp}
             onPointerLeave={() => holdTimer.current && clearTimeout(holdTimer.current)}
+            onContextMenu={(e) => e.preventDefault()}
           />
         ) : null}
 

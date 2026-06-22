@@ -173,6 +173,10 @@ body {
   background: var(--black);
   display: flex;
   flex-direction: column;
+  /* prevent long-press (hold-to-pause) from selecting/copying scene text */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .player-stage {
@@ -185,6 +189,9 @@ body {
   inset: 0;
   z-index: 10;
   touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .progress-row {
