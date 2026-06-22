@@ -186,11 +186,79 @@ fișierul tău la `public/music.mp3` și l-am setat să înceapă la refren prin
 
 ---
 
+**user:** Exportă conversația ca md.
+
+**ai:** Am creat `CONVERSATION.md` (changelog structurat al sesiunii).
+
+---
+
+**user:** Fă un md cu conversația, format user/ai, doar ce e important + keynotes.
+
+**ai:** Am creat `CONVERSATIE.md` (fișierul ăsta).
+
+---
+
+**user:** [solo-recap.netlify.app] „Distribuie prietenilor" nu merge — nu apare nimic
+de selectat. Vreau să aleg unde, cu un text care conține link-ul și poza cu sumarul;
+dacă Netlify nu acceptă poza, doar textul.
+
+**ai:** Cauza: pe Netlify (static) nu există server, deci `/api/image` dădea 404 și
+eroarea era înghițită → nu se întâmpla nimic. Am rescris share-ul **complet
+client-side**: generez imaginea sumarului în browser (canvas) și deschid share
+picker-ul cu **text + link (+ imagine)**; dacă nu se poate imaginea → doar text;
+dacă nu există Web Share → copiez link-ul și deschid WhatsApp Web cu textul.
+> 💡 Netlify e static → orice depindea de server (MP4/imagine) nu merge acolo;
+> de-aia share-ul e acum 100% client-side. Necesită redeploy.
+
+---
+
+**user:** Când țin apăsat pe ecran ca să dau pauză, se selectează/copiază textul. Stop.
+
+**ai:** Am pus `user-select: none` + `-webkit-touch-callout: none` pe player și pe
+tap-layer, și am blocat meniul contextual la long-press. Verificat: stil aplicat.
+
+---
+
+**user:** Fă toate slide-urile mai lungi, e prea rapid. Și după ultimul slide ține
+sumarul (nu sări la primul slide), ține-l să ruleze până apăs un buton — fără să
+oprești animația.
+
+**ai:** Am mărit durata fiecărei scene (ex: Intro 90→140, Cheltuieli 120→195,
+Profit 185→235, etc.). Și am pus sumarul să se bucleze la final ca să rămână animat.
+
+---
+
+**user:** Tot nu e bine — după ultimul slide afișează primul slide.
+
+**ai:** Cauza reală: după ce player-ul ajunge la final („ended"), `play()` repornește
+de la primul slide. Am schimbat: **buclez înainte de final** — la `frameupdate`, când
+frame-ul se apropie de capăt, dau `seekTo` înapoi în sumar cât încă rulează, deci nu
+mai intră în starea „ended" și nu mai sare la slide 1. Sumarul rămâne animat până apeși
+un buton.
+> 💡 `play()` după „ended" repornește de la 0 → soluția e să bucle**zi înainte** de
+> final, nu după.
+
+---
+
+**user:** stop servers
+
+**ai:** Am oprit serverul web (:5173).
+
+---
+
 ## Keynotes finale
 - O singură sursă de adevăr: `config.ts` (`SCENES`) → driveuiește și compoziția
-  (`TransitionSeries`) și progress bars + skip din player.
+  (`TransitionSeries`) și progress bars + skip din player. Slide-urile au durate mărite
+  pentru citit comod.
 - Personaje pe fundal negru → variante albe generate; pe galben → fără personaj sau pe
   stage deschis (regula galben-pe-galben).
-- Render MP4 + imagine necesită server Node (Chrome headless) — **rămâne de decis**
-  hostingul backend-ului pentru deploy Netlify.
+- **Share = 100% client-side** (canvas în browser) → merge pe Netlify static, fără server;
+  text + link (+ imagine când e suportat), altfel doar text.
+- **Sumarul se buclează** la final (seek înapoi înainte de „ended") ca să rămână animat și
+  să nu sară la primul slide; rămâne până la apăsarea unui buton.
+- Render MP4 (`/api/render`) tot necesită server Node (Chrome headless) — doar local;
+  share-ul nu mai depinde de el.
 - Muzica POC = piesă cu drepturi de autor → **doar local**, de schimbat înainte de publicare.
+- Long-press pe player nu mai selectează text (`user-select: none`).
+- De ținut minte: **redeploy** (`npm run build` + `netlify deploy --prod --dir=dist`)
+  după modificări ca să apară pe site.
