@@ -9,6 +9,11 @@ type Props = { data: RecapData; onEdit: () => void };
 
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
 
+// Loop the summary (last scene) at the end — restart just after its entrance settles
+// so the card stays put but the ambient animation (coins) keeps running.
+const SUMMARY_START = SCENE_STARTS[SCENES.length - 1];
+const SUMMARY_LOOP_START = SUMMARY_START + 45;
+
 const currentSceneIndex = (frame: number) => {
   let idx = 0;
   for (let i = 0; i < SCENE_STARTS.length; i++) {
@@ -30,8 +35,21 @@ export const StoryPlayer: React.FC<Props> = ({ data, onEdit }) => {
     const player = playerRef.current;
     if (!player) return;
     let started = false;
-    const onFrame = (e: { detail: { frame: number } }) => setFrame(e.detail.frame);
-    const onEnded = () => setEnded(true);
+    const onFrame = (e: { detail: { frame: number } }) => {
+      const f = e.detail.frame;
+      setFrame(f);
+      // Loop the summary BEFORE the player reaches the end — otherwise it enters the
+      // "ended" state and play() would restart from the first slide. Seeking back while
+      // still playing keeps the summary animating seamlessly.
+      if (f >= TOTAL_FRAMES - 4) {
+        player.seekTo(SUMMARY_LOOP_START);
+      }
+    };
+    // Fallback in case "ended" still fires.
+    const onEnded = () => {
+      player.seekTo(SUMMARY_LOOP_START);
+      player.play();
+    };
     const onPlay = () => {
       started = true;
       setEnded(false);

@@ -22,14 +22,14 @@ export type SceneDef = {
 };
 
 export const SCENES: SceneDef[] = [
-  { id: "intro", label: "Intro", durationInFrames: 90, Component: IntroScene },
-  { id: "activity", label: "Activitate", durationInFrames: 280, Component: ActivityScene },
-  { id: "out", label: "Cheltuieli", durationInFrames: 120, Component: MoneyOutScene },
-  { id: "net", label: "Profit", durationInFrames: 185, Component: NetResultScene },
-  { id: "taxes", label: "Taxe", durationInFrames: 110, Component: TaxesScene },
-  { id: "growth", label: "Creștere", durationInFrames: 160, Component: GrowthScene },
-  { id: "persona", label: "Personaj", durationInFrames: 120, Component: PersonaScene },
-  { id: "summary", label: "Sumar", durationInFrames: 150, Component: SummaryScene },
+  { id: "intro", label: "Intro", durationInFrames: 140, Component: IntroScene },
+  { id: "activity", label: "Activitate", durationInFrames: 320, Component: ActivityScene },
+  { id: "out", label: "Cheltuieli", durationInFrames: 195, Component: MoneyOutScene },
+  { id: "net", label: "Profit", durationInFrames: 235, Component: NetResultScene },
+  { id: "taxes", label: "Taxe", durationInFrames: 190, Component: TaxesScene },
+  { id: "growth", label: "Creștere", durationInFrames: 220, Component: GrowthScene },
+  { id: "persona", label: "Personaj", durationInFrames: 190, Component: PersonaScene },
+  { id: "summary", label: "Sumar", durationInFrames: 220, Component: SummaryScene },
 ];
 
 /** Cross-scene transition overlap (frames). Scenes overlap by this much. */
