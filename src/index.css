@@ -1,0 +1,322 @@
+:root {
+  --yellow: #feda00;
+  --black: #161616;
+  --white: #ffffff;
+  --n-lightest: #f7f7f7;
+  --n-lighter: #e4e4e4;
+  --n-dark: #5c5c5c;
+  --error: #b42318;
+
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  background: var(--black);
+  overscroll-behavior: none;
+}
+
+.screen {
+  width: 100dvw;
+  height: 100dvh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ---------- Form ---------- */
+.form-screen {
+  background: var(--white);
+  overflow-y: auto;
+}
+
+.form {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: calc(28px + var(--safe-top)) 22px calc(40px + var(--safe-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-logo {
+  height: 34px;
+  align-self: flex-start;
+  object-fit: contain;
+}
+
+.form-title {
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--black);
+  margin: 8px 0 0;
+  line-height: 1.1;
+}
+
+.form-sub {
+  font-size: 16px;
+  color: var(--n-dark);
+  margin: 0 0 4px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field > span {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--black);
+}
+
+.field input {
+  font: inherit;
+  font-size: 18px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--n-lighter);
+  border-radius: 12px;
+  background: var(--white);
+  color: var(--black);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.field input:focus {
+  border-color: var(--black);
+}
+
+.activity-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.activity-card {
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 18px 12px;
+  border-radius: 14px;
+  border: 2px solid var(--n-lighter);
+  background: var(--white);
+  color: var(--black);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.activity-card.active {
+  border-color: var(--black);
+  background: var(--yellow);
+}
+
+/* ---------- Buttons (SOLO signature) ---------- */
+.btn-primary {
+  font: inherit;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--black);
+  background: var(--yellow);
+  border: none;
+  border-radius: 9999px;
+  padding: 16px 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer;
+  min-height: 56px;
+}
+
+.btn-primary:disabled {
+  opacity: 0.75;
+  cursor: default;
+}
+
+.btn-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--black);
+}
+
+.credit {
+  font-size: 12px;
+  color: var(--n-dark);
+  text-align: center;
+  margin: 6px 0 0;
+  opacity: 0.7;
+}
+
+/* ---------- Story player ---------- */
+.player-shell {
+  position: absolute;
+  inset: 0;
+  background: var(--black);
+  display: flex;
+  flex-direction: column;
+}
+
+.player-stage {
+  position: absolute;
+  inset: 0;
+}
+
+.tap-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  touch-action: manipulation;
+}
+
+.progress-row {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  gap: 5px;
+  padding: calc(10px + var(--safe-top)) 50px 10px 12px;
+}
+
+.progress-track {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.35);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--white);
+  border-radius: 2px;
+}
+
+.edit-btn {
+  position: absolute;
+  top: calc(8px + var(--safe-top));
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.replay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 30;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  border: none;
+  background: var(--yellow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.end-actions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  padding: 16px 18px calc(20px + var(--safe-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 60%, rgba(0, 0, 0, 0));
+}
+
+.end-actions .btn-primary,
+.end-actions .btn-ghost {
+  width: 100%;
+  max-width: 460px;
+}
+
+.btn-ghost {
+  font: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--white);
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  border-radius: 9999px;
+  padding: 15px 22px;
+  min-height: 54px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.btn-ghost:disabled,
+.end-actions .btn-primary:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.sharebar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  padding: 14px 16px calc(16px + var(--safe-bottom));
+  display: flex;
+  justify-content: center;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
+}
+
+.sharebar .share {
+  width: 100%;
+  max-width: 460px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(22, 22, 22, 0.25);
+  border-top-color: var(--black);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
